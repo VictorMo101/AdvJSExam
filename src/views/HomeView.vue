@@ -4,7 +4,7 @@
 <template>
   <main>
     <section class="hero">
-        <h1 class="heroTitle">Welcome to the super cool pokemon pokemon pokemon!</h1>
+        <h1 class="heroTitle">Hi Welcome to the super cool pokemon pokemon pokemon!</h1>
         <p class="heroPikachu">🐀</p>
     </section>
 
