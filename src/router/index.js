@@ -18,7 +18,13 @@ const router = createRouter({
       path : '/pokemon',
       name: 'pokemon',
       component: () => import('../views/PokemonView.vue'),
-      meta: { requiresAuth: true } //this route requires authentication
+      //meta: { requiresAuth: true } //this route requires authentication
+    },
+        {
+      path : '/pokedex',
+      name: 'pokedex',
+      component: () => import('../views/PokedexView.vue'),
+      //meta: { requiresAuth: true } //this route requires authentication
     },
   ],
 })

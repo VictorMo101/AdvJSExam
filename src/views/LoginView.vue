@@ -1,3 +1,18 @@
+<script setup>
+import { ref } from 'vue';
+import { useAuth } from '../composables/useAuth';
+
+const { login, authError, loading, isLoggedIn, currentUser } = useAuth();
+
+const email = ref('');
+const password = ref('');
+
+const loginUser = () => {
+    login(email.value, password.value);
+}
+
+</script>
+
 <template>
     <div class="login-view">
         <h2>Login</h2>
@@ -15,21 +30,6 @@
 
     </div>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-import { useAuth } from '../composables/useAuth';
-
-const { login, authError, loading, isLoggedIn, currentUser } = useAuth();
-
-const email = ref('');
-const password = ref('');
-
-const loginUser = () => {
-    login(email.value, password.value);
-}
-
-</script>
 
 <style>
 .login-view {

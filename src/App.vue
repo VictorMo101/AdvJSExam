@@ -15,12 +15,16 @@ const { isLoggedIn } = useAuth();
         <li>
           <router-link to="/">Home</router-link>
         </li>
-        <li v-if="isLoggedIn">
-          <router-link to="/pokemon">pokemon</router-link>
-        </li>
         <li>
           <AuthButton />
         </li>
+        <li> <!-- v-if="isLoggedIn" -->
+          <router-link to="/Pokedex">Pokedex</router-link>
+        </li>
+          <li> <!-- v-if="isLoggedIn" -->
+          <router-link to="/Pokemon">Pokemon</router-link>
+        </li>
+
       </ul>
         <RouterView />
     </nav>

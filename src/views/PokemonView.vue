@@ -3,7 +3,7 @@
 
 <template>
   <main>
-BBBBBBBBBBBBBBBBB
+    <h2>Pokemon</h2>
   </main>
 </template>
 
