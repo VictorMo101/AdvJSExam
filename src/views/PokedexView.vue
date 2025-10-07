@@ -2,7 +2,11 @@
     import { usePokemon } from '../composables/usePokemon.js';
     const { all_Pokemons, displayPokemons, fetchPokemonDataBeforeRedirect } = usePokemon();
 
-    searchInput.addEventListener("keyup", handleSearch)
+    searchInput.addEventListener("keyup", handleSearch);
+
+    function handleSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+    }
 
 </script>
 
