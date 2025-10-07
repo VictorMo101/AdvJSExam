@@ -1,29 +1,8 @@
 <script setup>
-// import { onMounted } from 'vue';
-// import { usePokemon } from '../composables/usePokemon.js';
+    import { usePokemon } from '../composables/usePokemon.js';
+    const { all_Pokemons, displayPokemons, fetchPokemonDataBeforeRedirect } = usePokemon();
 
-// const { all_Pokemons } = usePokemon();
-
-// onMounted(() => {
-//   setTimeout(() => {
-//     console.log(all_Pokemons.value[5]);
-//   }, 100); // delay just for testing, not recommended in production
-// });
-
-    const max_Pokemon = 151;
-
-    const list_Wrapper = document.querySelector(".listWrapper");
-    const number_Filter = document.querySelector("#number");
-    const name_Filter = document.querySelector("#name");
-    const not_Found_Message = document.querySelector("#notFoundMessage");
-
-    let all_Pokemons = [];
-
-    fetch (`https://pokeapi.co/api/v2/pokemon?limit=${max_Pokemon}`)
-    .then((response) => response.json()) // Turns into json
-    .then((data) => {
-        all_Pokemons.value = data.results;
-    })
+    searchInput.addEventListener("keyup", handleSearch)
 
 </script>
 
@@ -97,5 +76,38 @@
 .sortWrap img {
     height: 1.5rem;
     width: 1.5rem;
+}
+
+.pokemonList {
+    display: flex;
+}
+
+.listWrapper {
+    display: flex;
+    flex-wrap: wrap;      /* Allow items to wrap to next line */
+    gap: 1rem;
+    justify-content: center; /* Or center, if you prefer */
+}
+
+.listItem {
+    width: 160px;
+    height: 160px;        
+    background-color: red;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.listItem:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.imgWrap img {
+    height: 100px;
+    width: 100px;
 }
 </style>
