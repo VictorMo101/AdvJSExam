@@ -26,12 +26,12 @@ const router = createRouter({
       component: () => import('../views/PokedexView.vue'),
       //meta: { requiresAuth: true } //this route requires authentication
     },
-    // {
-    //   path : 'pokedex/pokedexDetail/:id',
-    //   name: 'pokedexDetail',
-    //   component: () => import('../views/PokedexDetailView.vue'),
-    //   //meta: { requiresAuth: true } //this route requires authentication
-    // },
+    {
+      path : '/pokedex/pokedexDetail/:id',
+      name: 'pokedexDetail',
+      component: () => import('../views/PokedexDetailView.vue'),
+      //meta: { requiresAuth: true } //this route requires authentication
+    },
   ],
 })
 
