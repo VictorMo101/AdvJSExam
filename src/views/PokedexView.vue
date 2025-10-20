@@ -28,7 +28,7 @@ function displayPokemons(pokemon) {
         listItem.className = "listItem";
         listItem.innerHTML = `
             <div class="NumberWrap">
-                <p class="captionFonts">#${pokemonID}</p>
+                <p class="captionFonts">${pokemonID}</p>
             </div>
             <div class="imgWrap">
                 <img src="https://raw.githubusercontent.com/Pokeapi/sprites/master/sprites/pokemon/other/dream-world/${pokemonID}.svg" alt="${pokemon.name}">
