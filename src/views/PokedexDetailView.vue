@@ -119,8 +119,8 @@ watch(() => route.params.id, (newId) => {
 }
 
 .detailRoot {
-  padding: 1rem;
-  width: 80%;
+  padding-top: 0.5rem;
+  width: 90%;
   margin: 0 auto;
 }
 
@@ -190,6 +190,7 @@ watch(() => route.params.id, (newId) => {
   text-align: center;
   border-radius: 0;
   padding: 0 0.5rem 0 0.5rem;
+  list-style: none;
 }
 
 </style>

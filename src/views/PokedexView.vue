@@ -37,9 +37,35 @@ const displayPokemons = (pokemonArray) => {
   });
 };
 
+
+let searchTimeout = null;
+
+const handleSearch = (e) => {
+  const q = (e.target.value || '').trim().toLowerCase();
+  // use the loaded all_Pokemons list as the source
+  const source = all_Pokemons.value || [];
+  if (!q) {
+    displayPokemons(source);
+    return;
+  }
+  const filtered = source.filter(p => {
+    const id = p.url.split('/')[6];
+    return p.name.toLowerCase().includes(q) || id === q;
+  });
+  displayPokemons(filtered);
+};
+
 onMounted(async () => {
   const pokes = await fetchAllPokemons();
   displayPokemons(pokes || all_Pokemons.value);
+
+  const input = document.getElementById('searchInput');
+  if (input) {
+    input.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => handleSearch(e), 250);
+    });
+  }
 });
 
 </script>
@@ -77,6 +103,14 @@ onMounted(async () => {
     gap: 0.5rem;
 }
 
+.headerPokedex input {
+    margin-left: 0.5rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: #fff;
+    border: 2px solid #C2CBD2;
+}
+
 .searchWrap {
     display: flex;
     align-items: center;
@@ -98,14 +132,16 @@ onMounted(async () => {
 
 .pokemonList {
     display: flex;
+    width: 90%;
+    margin: auto;
 }
 
 .listWrapper {
     display: flex;
     flex-wrap: wrap;      /* Allow items to wrap to next line */
-    justify-content: space-between;
-    width: 90%;
-    margin: auto;
+    gap: 1rem;
+    justify-content: space-around;
+
 }
 
 .listItem {
@@ -114,7 +150,7 @@ onMounted(async () => {
     background-color: #fff;
     border: 2px solid #C2CBD2;
     padding: 10px;
-    border-radius: 12px;
+    border-radius: 1rem;
     margin-bottom: 1rem;
     align-items: center;
     text-align: center;

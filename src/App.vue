@@ -26,9 +26,10 @@ const { isLoggedIn } = useAuth();
         </li>
 
       </ul>
-        <RouterView />
+
     </nav>
   </header>
+  <RouterView />
 </template>
 
 <style>
@@ -48,8 +49,9 @@ body {
 
 
 .navbar {
-  margin: 0.5rem;
+  margin: 0.5rem auto 0.5rem auto;
   height: 60px;
+  width: 90%;
   background-color: #2F3B45;
   border-radius: 10rem;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12), 0 1.5px 4px 0 rgba(0,0,0,0.10);
