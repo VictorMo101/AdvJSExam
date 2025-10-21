@@ -13,6 +13,28 @@ const species = ref(null);
 const loading = ref(true);
 const error = ref(null);
 
+// simple type -> color map (adjust colors as you like)
+const typeColors = {
+  normal: '#A8A77A',
+  fire: '#EE8130',
+  water: '#6390F0',
+  electric: '#F7D02C',
+  grass: '#7AC74C',
+  ice: '#96D9D6',
+  fighting: '#C22E28',
+  poison: '#A33EA1',
+  ground: '#E2BF65',
+  flying: '#A98FF3',
+  psychic: '#F95587',
+  bug: '#A6B91A',
+  rock: '#B6A136',
+  ghost: '#735797',
+  dragon: '#6F35FC',
+  dark: '#705746',
+  steel: '#B7B7CE',
+  fairy: '#D685AD'
+};
+
 const loadPokemonById = async (id) => {
   const result = await fetchPokemonDataBeforeRedirect(id);
   if (result) {
@@ -48,7 +70,6 @@ watch(() => route.params.id, (newId) => {
 
 
 
-
 <template>
   <main class="detailRoot">
     <button class="backBtn" @click="goBack">Back</button>
@@ -66,13 +87,25 @@ watch(() => route.params.id, (newId) => {
           <img
             :src="pokemon.sprites?.other?.dream_world?.front_default || pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default"
             :alt="pokemon.name"
+            
+            
           />
         </div>
 
         <div class="info">
           <p class="types">
             <strong>Type:</strong>
-            <span v-for="(t, i) in pokemon.types" :key="i" class="typeLabel">{{ formatName(t.type.name) }}</span>
+            <span
+              v-for="(t, i) in pokemon.types"
+              :key="i"
+              class="typeLabel"
+              :style="{
+                backgroundColor: typeColors[t.type.name] || '#eee',
+                color: '#fff'
+              }"
+              >
+              {{ formatName(t.type.name) }}
+            </span>
           </p>
 
                     
@@ -97,13 +130,14 @@ watch(() => route.params.id, (newId) => {
 
 <style scoped>
 .backBtn {
-  margin-bottom: 1rem;
+  margin: 0 0 1rem 0;
   background-color: #fff;
   border: 2px solid #C2CBD2;
   padding: 0.5rem 1rem 0.5rem 1rem;
   border-radius: 1rem;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   transition: background-color 0.3s;
+  color: black;
 }
 
 .backBtn:hover {
