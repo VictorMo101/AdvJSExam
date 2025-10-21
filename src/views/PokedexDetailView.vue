@@ -3,7 +3,6 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 
-
 const route = useRoute();
 const router = useRouter();
 
@@ -12,7 +11,7 @@ const species = ref(null);
 const loading = ref(true);
 const error = ref(null);
 
-async function loadPokemonById(id) {
+const loadPokemonById = async (id) => {
   loading.value = true;
   error.value = null;
   pokemon.value = null;
@@ -42,18 +41,19 @@ watch(() => route.params.id, (newId) => {
   if (newId) loadPokemonById(newId);
 });
 
-function formatName(name) {
+const formatName = (name) => {
   if (!name) return '';
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-function getFlavorText() {
+const getFlavorText = () => {
   if (!species.value) return '';
+  
   const entry = species.value.flavor_text_entries?.find(e => e.language?.name === 'en');
   return entry ? entry.flavor_text.replace(/\f|\n|\r/g, ' ') : '';
 }
 
-function goBack() {
+const goBack = () => {
   router.back();
 }
 </script>

@@ -1,11 +1,10 @@
 export function usePokemon() {
     
-
 const max_Pokemon = 151;
 let all_Pokemons = []; //fetching data and putting into this array
 
 
-async function fetchPokemonDataBeforeRedirect(id) {
+const fetchPokemonDataBeforeRedirect = async (id) => {
     try {
         const [pokemon, pokemonSpecies] = await Promise.all([
             fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) => res.json()),

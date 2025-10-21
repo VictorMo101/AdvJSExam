@@ -10,13 +10,13 @@
 
     // searchInput.addEventListener("keyup", handleSearch);
 
-    function handleSearch() {
+    const handleSearch =() => {
         const searchTerm = searchInput.value.toLowerCase();
     }
 
 
 
-function displayPokemons(pokemon) {
+const displayPokemons = (pokemon) => {
     const list_Wrapper = document.querySelector(".listWrapper");
     if (!list_Wrapper) return; // Prevent error if not found
 
