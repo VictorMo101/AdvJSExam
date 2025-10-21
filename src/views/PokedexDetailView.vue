@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { usePokemon } from '@/composables/usePokemon'; // <-- import composable
 
+const { fetchPokemonDataBeforeRedirect } = usePokemon();
 
 const route = useRoute();
 const router = useRouter();
@@ -12,25 +14,27 @@ const loading = ref(true);
 const error = ref(null);
 
 const loadPokemonById = async (id) => {
-  loading.value = true;
-  error.value = null;
-  pokemon.value = null;
-  species.value = null;
-
-  try {
-    const [p, s] = await Promise.all([
-      fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(r => r.json()),
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then(r => r.json())
-    ]);
-    pokemon.value = p;
-    species.value = s;
-  } catch (err) {
-    console.error(err);
+  const result = await fetchPokemonDataBeforeRedirect(id);
+  if (result) {
+    pokemon.value = result.pokemon;
+    species.value = result.species;
+  } else {
     error.value = 'Failed to load Pokémon data.';
-  } finally {
-    loading.value = false;
   }
-}
+
+  loading.value = false;
+};
+
+const formatName = (name) => name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
+
+const getFlavorText = () => {
+  if (!species.value) return '';
+  const entry = species.value.flavor_text_entries?.find(e => e.language?.name === 'en');
+  return entry ? entry.flavor_text.replace(/\f|\n|\r/g, ' ') : '';
+};
+
+
+const goBack = () => router.back();
 
 onMounted(() => {
   const id = route.params.id;
@@ -40,23 +44,10 @@ onMounted(() => {
 watch(() => route.params.id, (newId) => {
   if (newId) loadPokemonById(newId);
 });
-
-const formatName = (name) => {
-  if (!name) return '';
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
-
-const getFlavorText = () => {
-  if (!species.value) return '';
-  
-  const entry = species.value.flavor_text_entries?.find(e => e.language?.name === 'en');
-  return entry ? entry.flavor_text.replace(/\f|\n|\r/g, ' ') : '';
-}
-
-const goBack = () => {
-  router.back();
-}
 </script>
+
+
+
 
 <template>
   <main class="detailRoot">
@@ -66,10 +57,11 @@ const goBack = () => {
     <div v-else-if="error" class="status error">{{ error }}</div>
     <div v-else-if="pokemon" class="pokemonCard">
       <div class="header">
-        <h2>#{{ pokemon.id }} — {{ formatName(pokemon.name) }}</h2>
+        <h2>#{{ pokemon.id }} - {{ formatName(pokemon.name) }}</h2>
       </div>
 
       <div class="content">
+
         <div class="imageWrap">
           <img
             :src="pokemon.sprites?.other?.dream_world?.front_default || pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default"
@@ -83,15 +75,20 @@ const goBack = () => {
             <span v-for="(t, i) in pokemon.types" :key="i" class="typeLabel">{{ formatName(t.type.name) }}</span>
           </p>
 
-          <p class="stats">
-            <strong>Stats:</strong>
+                    
+          <div class="stats">
+            <p><strong>Stats:</strong></p>
             <ul>
               <li v-for="s in pokemon.stats" :key="s.stat.name">{{ formatName(s.stat.name) }}: {{ s.base_stat }}</li>
             </ul>
+          </div>
+
+          <p class="description">
+            <strong>About:</strong> {{ getFlavorText() }}
           </p>
 
-          <p class="description"><strong>About:</strong> {{ getFlavorText() }}</p>
         </div>
+
       </div>
     </div>
     <div v-else class="status">No Pokémon data</div>
@@ -99,42 +96,100 @@ const goBack = () => {
 </template>
 
 <style scoped>
-.detailRoot {
-  padding: 1rem;
-  max-width: 900px;
-  margin: 0 auto;
-}
 .backBtn {
   margin-bottom: 1rem;
+  background-color: #fff;
+  border: 2px solid #C2CBD2;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: background-color 0.3s;
 }
+
+.backBtn:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}
+
 .status {
   padding: 1rem;
 }
 .status.error {
   color: #b00020;
 }
+
+.detailRoot {
+  padding: 1rem;
+  width: 80%;
+  margin: 0 auto;
+}
+
 .pokemonCard {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 1rem;
   padding: 1rem;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  border: 2px solid #C2CBD2;
 }
+
+.pokemonCard h2 {
+  margin-bottom: 1rem;
+  background-color: #E8ECF1;
+  border: 2px solid #C2CBD2;
+  padding: 0.5rem;
+  border-radius: 1rem;
+}
+
 .content {
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
+  gap: 2%;
 }
+
+.imageWrap {
+  background-color: #E8ECF1;
+  border: 2px solid #C2CBD2;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
 .imageWrap img {
   width: 220px;
   height: 220px;
   object-fit: contain;
+} 
+
+.info .types, .stats {
+  margin-bottom: 2rem;
 }
-.info { flex: 1; }
+
 .typeLabel {
   display: inline-block;
   margin-left: .5rem;
   padding: .2rem .5rem;
-  border-radius: 10px;
+  border-radius: 10rem;
   background: #eee;
+  border: 2px solid #C2CBD2;
 }
+
+.stats p {
+  margin-bottom: 0.5rem;
+}
+
+.stats ul {
+  background-color: #E8ECF1;
+  border-radius: 10rem;
+  padding: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+  border: 2px solid #C2CBD2;
+}
+
+.stats ul li {
+  background-color: transparent;
+  text-align: center;
+  border-radius: 0;
+  padding: 0 0.5rem 0 0.5rem;
+}
+
 </style>

@@ -1,32 +1,24 @@
 <script setup>
-    import { onMounted } from 'vue';
-    import { useRouter } from 'vue-router';
-    import { usePokemon } from '../composables/usePokemon.js';
-    const { max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon();
-    let { all_Pokemons } = usePokemon();
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { usePokemon } from '../composables/usePokemon.js';
 
-    const router = useRouter();
-    
+const { all_Pokemons, fetchAllPokemons, fetchPokemonDataBeforeRedirect } = usePokemon();
+const router = useRouter();
 
-    // searchInput.addEventListener("keyup", handleSearch);
+const formatName = (name) => name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
 
-    const handleSearch =() => {
-        const searchTerm = searchInput.value.toLowerCase();
-    }
+const displayPokemons = (pokemonArray) => {
+  const list_Wrapper = document.querySelector('.listWrapper');
+  if (!list_Wrapper) return;
+  list_Wrapper.innerHTML = '';
 
+  (pokemonArray || []).forEach((pokemon) => {
+    const pokemonID = pokemon.url.split('/')[6];
+    const listItem = document.createElement('div');
 
-
-const displayPokemons = (pokemon) => {
-    const list_Wrapper = document.querySelector(".listWrapper");
-    if (!list_Wrapper) return; // Prevent error if not found
-
-    list_Wrapper.innerHTML = "";
-
-    pokemon.forEach((pokemon) =>  {
-        const pokemonID = pokemon.url.split("/")[6];
-        const listItem = document.createElement("div");
-        listItem.className = "listItem";
-        listItem.innerHTML = `
+    listItem.className = 'listItem';
+    listItem.innerHTML =  `
             <div class="NumberWrap">
                 <p class="captionFonts">${pokemonID}</p>
             </div>
@@ -34,38 +26,21 @@ const displayPokemons = (pokemon) => {
                 <img src="https://raw.githubusercontent.com/Pokeapi/sprites/master/sprites/pokemon/other/dream-world/${pokemonID}.svg" alt="${pokemon.name}">
             </div>
             <div class="nameWrap">
-                <p class="">${pokemon.name}</p>
+                <p class="">${formatName(pokemon.name)}</p>
             </div>
         `;
-
-        listItem.addEventListener("click", async () => {
-            const success = await fetchPokemonDataBeforeRedirect(pokemonID);
-            if (success) {
-
-                // Navigate with the router to the named route and param that your router expects
-                
-                // router.push({ name: 'pokedexDetail', params: { id: pokemonID } });
-
-                router.push(`/pokedex/pokedexDetail/${pokemonID}`)
-
-                // Alternative: router.push(`/pokedex/pokedexDetail/${pokemonID}`)
-                // Avoid window.location.href to a .vue file path — router manages routes.
-            }
-        });
-        list_Wrapper.appendChild(listItem);
+    listItem.addEventListener('click', async () => {
+      const success = await fetchPokemonDataBeforeRedirect(pokemonID);
+      if (success) router.push(`/pokedex/pokedexDetail/${pokemonID}`);
     });
-}
+    list_Wrapper.appendChild(listItem);
+  });
+};
 
-onMounted(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon?limit=${max_Pokemon}`)
-        .then((response) => response.json())
-        .then((data) => {
-            all_Pokemons = data.results;
-            displayPokemons(all_Pokemons);
-        });
-}); //Fetches the first 151 Pokémon from the API on mount and displays them in the DOM using displayPokemons. 
-    // Also provides a function to fetch detailed data before redirecting
-
+onMounted(async () => {
+  const pokes = await fetchAllPokemons();
+  displayPokemons(pokes || all_Pokemons.value);
+});
 
 </script>
 
@@ -79,53 +54,32 @@ onMounted(() => {
                 <input type="text"
                 placeholder="Search"
                 class="searchInput"
-                id="searchInput"
-                >
-            </div>
-            <div class="sortWrapper">
-                <div class="sortWrap">
-                    <img src="../assets/sort-solid-full.svg" alt="sort icon" class="sortIcon" id="sortIcon">
-                </div>
-                <div class="filterWrapper">
-                    <p>Sort by:</p>
-                    <div class="filterWrap">
-                        <div>
-                            <input 
-                            type="radio" 
-                            id="number" 
-                            name="filters" 
-                            value="number" 
-                            checked>
-                            <label for="number">Number</label>
-                        </div>
-                        <div>
-                            <input 
-                            type="radio" 
-                            id="name" 
-                            name="filters" 
-                            value="name">
-                            <label for="name">Name</label>
-                        </div>
-                    </div>
-                </div>
+                id="searchInput">
             </div>
         </div>
     </section>
+
     <section class="pokemonList">
         <div class="container">
             <div class="listWrapper"></div>
         </div>
-        <div id="notFoundMessage">Pokemon not found</div>
     </section>
   </main>
 </template>
 
 <style>
 
+.headerPokedex {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: 1rem auto 2rem auto;
+    gap: 0.5rem;
+}
+
 .searchWrap {
     display: flex;
     align-items: center;
-    margin-bottom: 2rem;
 }
 
 .searchWrap input {
@@ -149,14 +103,16 @@ onMounted(() => {
 .listWrapper {
     display: flex;
     flex-wrap: wrap;      /* Allow items to wrap to next line */
-    gap: 1rem;
-    justify-content: center; /* Or center, if you prefer */
+    justify-content: space-between;
+    width: 90%;
+    margin: auto;
 }
 
 .listItem {
     width: 160px;
     height: 160px;        
-    background-color: white;
+    background-color: #fff;
+    border: 2px solid #C2CBD2;
     padding: 10px;
     border-radius: 12px;
     margin-bottom: 1rem;

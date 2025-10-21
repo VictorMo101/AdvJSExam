@@ -1,22 +1,34 @@
+import { ref } from 'vue';
+
 export function usePokemon() {
-    
-const max_Pokemon = 151;
-let all_Pokemons = []; //fetching data and putting into this array
+  const max_Pokemon = 151;
+  const all_Pokemons = ref([]);
 
-
-const fetchPokemonDataBeforeRedirect = async (id) => {
+  const fetchAllPokemons = async () => {
     try {
-        const [pokemon, pokemonSpecies] = await Promise.all([
-            fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) => res.json()),
-            fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then((res) => res.json()),
-        ]);
-        return true;
-    } catch (error) {
-        console.error("failed to fetch pokemon data, before redirect");
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${max_Pokemon}`);
+      const data = await res.json();
+      all_Pokemons.value = data.results;
+      return data.results;
+    } catch (err) {
+      console.error('failed to fetch pokemons', err);
+      return null;
     }
-}   // Fetches detailed data for a specific Pokémon and its species before redirecting. 
-    // Returns true if successful, logs an error if the fetch fails.
+  };
 
+  const fetchPokemonDataBeforeRedirect = async (id) => {
+    try {
+      const [pokemon, pokemonSpecies] = await Promise.all([
+        fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(r => r.json()),
+        fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then(r => r.json())
+      ]);
+      return { pokemon, species: pokemonSpecies };
+    } 
+      catch (error) {
+      console.error('failed to fetch pokemon data before redirect', error);
+      return null;
+    }
+  };
 
-    return { max_Pokemon, all_Pokemons, fetchPokemonDataBeforeRedirect }
+  return { max_Pokemon, all_Pokemons, fetchAllPokemons, fetchPokemonDataBeforeRedirect };
 }
