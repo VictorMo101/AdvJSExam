@@ -86,7 +86,7 @@ onMounted(async () => {
     </section>
 
     <section class="pokemonList">
-        <div class="container">
+        <div class="pokemonContainer">
             <div class="listWrapper"></div>
         </div>
     </section>
@@ -136,12 +136,15 @@ onMounted(async () => {
     margin: auto;
 }
 
-.listWrapper {
-    display: flex;
-    flex-wrap: wrap;      /* Allow items to wrap to next line */
-    gap: 1rem;
-    justify-content: space-around;
 
+
+.listWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: auto;
+  justify-content: center;
+  
 }
 
 .listItem {
@@ -151,7 +154,7 @@ onMounted(async () => {
     border: 2px solid #C2CBD2;
     padding: 10px;
     border-radius: 1rem;
-    margin-bottom: 1rem;
+
     align-items: center;
     text-align: center;
     transition: transform 0.2s;
