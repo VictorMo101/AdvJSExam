@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { firebaseApp } from './firebase.js'
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, getAuth } from 'firebase/auth'
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, getAuth } from 'firebase/auth'
 
 const auth = getAuth(firebaseApp)
 
@@ -49,6 +49,20 @@ const logout = async (routerInstance) => {
     }
 }
 
+const register = async (regEmail, regPassword) => {
+    loading.value = true
+    authError.value = null
+    try {
+        await createUserWithEmailAndPassword(auth, regEmail, regPassword)
+    }
+    catch(error) {
+        authError.value = error.message
+    }
+    finally {
+        loading.value = false
+    }
+}
+
 export function useAuth() {
     return { 
         currentUser, 
@@ -56,5 +70,7 @@ export function useAuth() {
         authError, 
         loading, 
         login, 
-        logout }
+        logout,
+        register
+    }
 }
