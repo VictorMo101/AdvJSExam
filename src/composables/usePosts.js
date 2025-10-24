@@ -73,7 +73,6 @@ export function usePosts() {
     }
   }
 
-
   const getAuthorUid = (post) => {
     if (!post) return ''
     return Array.isArray(post.uid) ? post.uid[0] : post.uid || ''
