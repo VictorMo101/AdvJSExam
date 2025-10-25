@@ -62,17 +62,17 @@ export function useYourPokemon() {
   // ✅ Add Pokémon if not already owned
   const addPokemon = async (pokemon) => {
     if (!pokemon || !pokemon.name) {
-      console.error('Invalid Pokémon data')
+      console.log('Invalid Pokémon data')
       return
     }
     if (!currentUser.value) {
-      console.error('No user logged in')
+      console.log('No user logged in')
       return
     }
 
     const alreadyOwned = await userOwnsPokemon(pokemon.id)
     if (alreadyOwned) {
-      console.warn(`⚠️ You already own ${pokemon.name}`)
+      console.log(`⚠️ You already own ${pokemon.name}`)
       return
     }
 
@@ -87,7 +87,7 @@ export function useYourPokemon() {
       })
       console.log(`✅ Added ${pokemon.name} to Firestore`)
     } catch (err) {
-      console.error('❌ Failed to add Pokémon:', err)
+      console.log('❌ Failed to add Pokémon:', err)
     }
   }
 
@@ -97,7 +97,7 @@ export function useYourPokemon() {
       await deleteDoc(doc(db, yourPokemonFBcollectionRef, id))
       console.log(`🗑️ Pokémon with ID ${id} deleted`)
     } catch (err) {
-      console.error('❌ Failed to delete Pokémon:', err)
+      console.log('❌ Failed to delete Pokémon:', err)
     }
   }
 

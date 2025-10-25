@@ -3,8 +3,9 @@ import { ref } from 'vue'
 import { usePokemon } from '@/composables/usePokemon'
 import { useYourPokemon } from '@/composables/useYourPokemon'
 
-const { max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon()
+const { dreamWorldUrl, formatName, max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon()
 const { addPokemon, yourPokemon, deletePokemon } = useYourPokemon()
+
 
 const selectedPokemon = ref(null)
 
@@ -20,9 +21,7 @@ const loadRandomPokemon = async () => {
       return
     }
 
-    const image =
-      data.pokemon.sprites?.other?.['official-artwork']?.front_default ||
-      data.pokemon.sprites?.front_default || ''
+    const image = dreamWorldUrl(id)
 
     selectedPokemon.value = {
       id,
@@ -44,10 +43,10 @@ const loadRandomPokemon = async () => {
 
     <!-- 🎲 Random Pokémon Loader -->
     <section class="random-section">
-      <h2>Random Pokémon Generator</h2>
+      <h2>Add a Pokemon to your collection here!</h2>
 
       <div v-if="selectedPokemon" class="pokemon-card">
-        <p>Random: {{ selectedPokemon.name }}</p>
+        <p>You got {{ formatName(selectedPokemon.name) }}!</p>
         <img
           v-if="selectedPokemon.image"
           :src="selectedPokemon.image"
@@ -57,27 +56,34 @@ const loadRandomPokemon = async () => {
         />
       </div>
 
-      <button class="load-btn" @click="loadRandomPokemon">🎲 Load Random Pokémon</button>
+      <button class="load-btn" @click="loadRandomPokemon">Pokemon Button</button>
     </section>
 
     <!-- 🧾 Your Saved Pokémon -->
     <section class="your-pokemon-section">
-      <h2>Your Pokémon Collection</h2>
+      <h2>Your Pokemon Collection</h2>
 
       <div v-if="yourPokemon.length === 0" class="empty">
-        <p>You dont have any Pokémon yet. Click the button above to catch one!</p>
+        <p>You dont have any Pokemon yet. Click the button above to catch one!</p>
       </div>
 
       <ul class="pokemon-list" v-else>
-        <li v-for="poke in yourPokemon" :key="poke.id" class="pokemon-entry">
-          <img :src="poke.image" :alt="poke.name" width="80" height="80" />
-          <div class="info">
-            <strong>{{ poke.name }}</strong>
-            <small>#{{ poke.pokeId }}</small>
-            <p class="email">{{ poke.userEmail }}</p>
-          </div>
-          <button class="delete-btn" @click="deletePokemon(poke.id)">Release</button>
-        </li>
+ 
+       
+  <li class="pokemon-entry" v-for="pokemon in yourPokemon" :key="pokemon.id">
+  <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
+    <div class="boxiscool">
+      <img :src="pokemon.image" :alt="pokemon.name" width="80" height="80" />
+      <div class="info">
+        <strong>{{ formatName(pokemon.name) }}</strong>
+        <small>#{{ pokemon.pokeId }}</small>
+      </div>
+    </div>
+  </router-link>
+  <button class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
+</li>
+
+        
       </ul>
     </section>
 
@@ -94,24 +100,30 @@ const loadRandomPokemon = async () => {
   gap: 2rem;
 }
 
+.boxiscool {
+  height:100%;
+  width: 100%;
+}
+
 .random-section,
 .your-pokemon-section {
   text-align: center;
 }
 
 .load-btn {
-  margin-top: 10px;
-  padding: 10px 16px;
-  background: #ffcb05;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
+  margin-top: 1rem;
+  background-color: #fff;
+  border: 2px solid #C2CBD2;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: background-color 0.3s;
+  color: black;
 }
 
 .load-btn:hover {
-  background: #ffde59;
+  cursor: pointer;
+  background-color: #f0f0f0;
 }
 
 .pokemon-list {
@@ -124,27 +136,24 @@ const loadRandomPokemon = async () => {
 }
 
 .pokemon-entry {
-  background: #f8f8f8;
-  border-radius: 10px;
-  padding: 10px;
-  width: 160px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    width: 160px;   
+    background-color: #fff;
+    border: 2px solid #C2CBD2;
+    padding: 10px;
+    border-radius: 1rem;
+    align-items: center;
+    text-align: center;
+
+    transition: transform 0.2s;
 }
 
-.pokemon-entry img {
-  border-radius: 6px;
+.pokemon-entry:hover {
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 .pokemon-entry .info {
-  margin-top: 5px;
-}
-
-.email {
-  color: #777;
-  font-size: 0.7rem;
+  margin-top: 0.5rem;
 }
 
 .empty {
@@ -153,14 +162,15 @@ const loadRandomPokemon = async () => {
 }
 
 .delete-btn {
-  margin-top: 8px;
   background: #ff5c5c;
   color: white;
   border: none;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 1rem;
   cursor: pointer;
   transition: 0.2s;
+  position: relative;
+  top: -1.7rem;
 }
 
 .delete-btn:hover {

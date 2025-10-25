@@ -18,6 +18,9 @@ const registerUser = () => {
     register(regEmail.value, regPassword.value);
 }
 
+const showRegister = ref(false);
+const toggleRegister = () => { showRegister.value = !showRegister.value; }
+
 </script>
 
 <template>
@@ -27,13 +30,20 @@ const registerUser = () => {
             <input type="email" v-model="email" placeholder="Email" required />
             <input type="password" v-model="password" placeholder="Password" required />
             <button type="submit" :disabled="loading">Login</button>
+            <!-- button press to toggle Register -->
         </form>
         <div class="error" v-if="authError">
             {{ authError }}
         </div>
     </div>
 
-    <div v-if="!isLoggedIn" class="register-view">
+    <div class="regShow" v-if="!isLoggedIn">
+        <button class="regButton" type="button" @click="toggleRegister">
+            {{ showRegister ? 'Hide register' : 'Wanna register?' }}
+        </button>
+    </div>
+
+    <div class="register-view" v-if="!isLoggedIn && showRegister">
         <h2>Register</h2>
         <form @submit.prevent="registerUser">
             <input type="email" v-model="regEmail" placeholder="Email" required />
@@ -45,20 +55,39 @@ const registerUser = () => {
         </div>
     </div>
 
-    <div class="loggedIn" v-if="isLoggedIn"> <!-- ((Only)) Shows the user ur logged in, also useful for switching states -->
+    <div class="loggedIn" v-if="isLoggedIn">
             Hello there! <strong>{{ currentUser?.email }}</strong>, it's poking time
     </div>
 </template>
 
-<style>
+<style scoped>
 .login-view {
     max-width: 400px;
     margin: 20px auto;
 }
 
+.login-view h2 {
+    margin-bottom: 0.5rem;
+}
+
 .register-view {
     max-width: 400px;
     margin: 20px auto;
+}
+
+.register-view h2 {
+    margin-bottom: 0.5rem;
+}
+
+.regShow {
+    max-width: 400px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.regButton {
+    margin: 0;
 }
 
 .loggedIn {
@@ -72,12 +101,28 @@ const registerUser = () => {
     margin-top: 16px;
 }
 
+input {
+  margin-right: 0.5rem;
+  padding: 0.5rem;
+  border: 2px solid #C2CBD2;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
 button {
-    padding: 0.5rem;
-    background-color: #3E4A55;
-    color: #EAECEE;
-    margin-left: 1rem;
-    border-radius: 50px;
+  margin-left: 0;
+  background-color: #fff;
+  border: 2px solid #C2CBD2;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: background-color 0.3s;
+  color: black;
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
 }
 
 form {

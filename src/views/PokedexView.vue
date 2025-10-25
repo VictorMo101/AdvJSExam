@@ -1,94 +1,74 @@
 <script setup>
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
 import { usePokemon } from '../composables/usePokemon.js';
 
-const { all_Pokemons, fetchAllPokemons, fetchPokemonDataBeforeRedirect } = usePokemon();
-const router = useRouter();
+const { formatName, dreamWorldUrl, max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon();
 
-const formatName = (name) => name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
+const query = ref('');
+const pokedexList = ref([]); // [{ id, name }]
 
-const displayPokemons = (pokemonArray) => {
-  const list_Wrapper = document.querySelector('.listWrapper');
-  if (!list_Wrapper) return;
-  list_Wrapper.innerHTML = '';
-
-  (pokemonArray || []).forEach((pokemon) => {
-    const pokemonID = pokemon.url.split('/')[6];
-    const listItem = document.createElement('div');
-
-    listItem.className = 'listItem';
-    listItem.innerHTML =  `
-            <div class="NumberWrap">
-                <p class="captionFonts">${pokemonID}</p>
-            </div>
-            <div class="imgWrap">
-                <img src="https://raw.githubusercontent.com/Pokeapi/sprites/master/sprites/pokemon/other/dream-world/${pokemonID}.svg" alt="${pokemon.name}">
-            </div>
-            <div class="nameWrap">
-                <p class="">${formatName(pokemon.name)}</p>
-            </div>
-        `;
-    listItem.addEventListener('click', async () => {
-      const success = await fetchPokemonDataBeforeRedirect(pokemonID);
-      if (success) router.push(`/pokedex/pokedexDetail/${pokemonID}`);
-    });
-    list_Wrapper.appendChild(listItem);
-  });
+const loadList = async () => {
+  const ids = Array.from({ length: max_Pokemon }, (_, i) => i + 1);
+  const results = await Promise.all(
+    ids.map(async (id) => {
+      const data = await fetchPokemonDataBeforeRedirect(id);
+      if (!data || !data.pokemon) return null;
+      return { id, name: data.pokemon.name };
+    })
+  );
+  pokedexList.value = results.filter(Boolean);
 };
 
-
-let searchTimeout = null;
-
-const handleSearch = (e) => {
-  const q = (e.target.value || '').trim().toLowerCase();
-  // use the loaded all_Pokemons list as the source
-  const source = all_Pokemons.value || [];
-  if (!q) {
-    displayPokemons(source);
-    return;
-  }
-  const filtered = source.filter(p => {
-    const id = p.url.split('/')[6];
-    return p.name.toLowerCase().includes(q) || id === q;
-  });
-  displayPokemons(filtered);
-};
-
-onMounted(async () => {
-  const pokes = await fetchAllPokemons();
-  displayPokemons(pokes || all_Pokemons.value);
-
-  const input = document.getElementById('searchInput');
-  if (input) {
-    input.addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => handleSearch(e), 250);
-    });
-  }
+const filteredPokemons = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  const source = pokedexList.value || [];
+  if (!q) return source;
+  return source.filter(pokemon => pokemon.name.toLowerCase().includes(q) || String(pokemon.id) === q);
 });
 
+onMounted(loadList);
 </script>
 
 <template>
   <main>
     <section class="headerPokedex">
-        <h2>Pokedex</h2>
-        <div class="searchWrapper">
-            <div class="searchWrap">
-                <img src="../assets/magnifying-glass-solid-full.svg" alt="search icon">
-                <input type="text"
-                placeholder="Search"
-                class="searchInput"
-                id="searchInput">
-            </div>
+      <h2>Pokedex</h2>
+      <div class="searchWrapper">
+        <div class="searchWrap">
+          <img src="../assets/magnifying-glass-solid-full.svg" alt="search icon">
+          <input
+            v-model="query"
+            type="text"
+            placeholder="Search"
+            class="searchInput"
+            id="searchInput"
+          >
         </div>
+      </div>
     </section>
 
     <section class="pokemonList">
-        <div class="pokemonContainer">
-            <div class="listWrapper"></div>
+      <div class="pokemonContainer">
+        <div class="listWrapper">
+          <div
+            v-for="pokemon in filteredPokemons"
+            :key="pokemon.id"
+            class="listItem"
+          >
+            <router-link :to="`/pokedex/pokedexDetail/${pokemon.id}`">
+              <div class="NumberWrap">
+                <p>{{ pokemon.id }}</p>
+              </div>
+              <div class="imgWrap">
+                <img :src="dreamWorldUrl(pokemon.id)" :alt="pokemon.name">
+              </div>
+              <div class="nameWrap">
+                <p>{{ formatName(pokemon.name) }}</p>
+              </div>
+            </router-link>
+          </div>
         </div>
+      </div>
     </section>
   </main>
 </template>
@@ -134,6 +114,7 @@ onMounted(async () => {
     display: flex;
     width: 90%;
     margin: auto;
+    justify-content: center;
 }
 
 

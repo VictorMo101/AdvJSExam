@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { usePokemon } from '@/composables/usePokemon'; // <-- import composable
 
-const { fetchPokemonDataBeforeRedirect } = usePokemon();
+const { dreamWorldUrl, formatName, fetchPokemonDataBeforeRedirect } = usePokemon();
 
 const route = useRoute();
 const router = useRouter();
@@ -47,8 +47,6 @@ const loadPokemonById = async (id) => {
   loading.value = false;
 };
 
-const formatName = (name) => name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
-
 const getFlavorText = () => {
   if (!species.value) return '';
   const entry = species.value.flavor_text_entries?.find(e => e.language?.name === 'en');
@@ -85,7 +83,7 @@ watch(() => route.params.id, (newId) => {
 
         <div class="imageWrap">
           <img
-            :src="pokemon.sprites?.other?.dream_world?.front_default || pokemon.sprites?.other?.['official-artwork']?.front_default || pokemon.sprites?.front_default"
+            :src="dreamWorldUrl(pokemon.id)"
             :alt="pokemon.name"
             
             

@@ -4,18 +4,6 @@ export function usePokemon() {
   const max_Pokemon = 151;
   const all_Pokemons = ref([]);
 
-  const fetchAllPokemons = async () => {
-    try {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${max_Pokemon}`);
-      const data = await res.json();
-      all_Pokemons.value = data.results;
-      return data.results;
-    } catch (err) {
-      console.error('failed to fetch pokemons', err);
-      return null;
-    }
-  };
-
   const fetchPokemonDataBeforeRedirect = async (id) => {
     try {
       const [pokemon, pokemonSpecies] = await Promise.all([
@@ -30,5 +18,9 @@ export function usePokemon() {
     }
   };
 
-  return { max_Pokemon, all_Pokemons, fetchAllPokemons, fetchPokemonDataBeforeRedirect };
+  const dreamWorldUrl = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${id}.svg`;
+
+  const formatName = (name) => name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
+
+  return { formatName, dreamWorldUrl, max_Pokemon, all_Pokemons, fetchPokemonDataBeforeRedirect };
 }
