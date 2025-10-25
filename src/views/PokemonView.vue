@@ -152,6 +152,11 @@ const loadRandomPokemon = async () => {
   cursor: pointer;
 }
 
+.pokemon-entry a {
+  text-decoration: none;
+  color: black;
+}
+
 .pokemon-entry .info {
   margin-top: 0.5rem;
 }

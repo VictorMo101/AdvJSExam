@@ -146,6 +146,11 @@ onMounted(loadList);
     transform: scale(1.05);
 }
 
+.listItem a {
+    text-decoration: none;
+    color: black;
+}
+
 .imgWrap img {
     height: 100px;
     width: 100px;
