@@ -8,7 +8,6 @@ import {
   query,
   where,
   getDocs,
-  updateDoc, arrayUnion, arrayRemove,
   setDoc, serverTimestamp
 } from 'firebase/firestore'
 import { db } from './firebase.js'
@@ -110,7 +109,6 @@ export function useYourPokemon() {
         userId: currentUser.value.uid,
         userEmail: currentUser.value.email,
         createdAt: new Date(),
-        favorite: [],
       })
       console.log(`✅ Added ${pokemon.name} to Firestore`)
 

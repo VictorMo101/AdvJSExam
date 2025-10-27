@@ -43,29 +43,23 @@ const isFavorited = (pokemon) => {
       <div v-if="yourPokemon.length === 0" class="empty">
         <p>You dont have any Pokemon yet. Click the button above to catch one!</p>
       </div>
-
+      
       <ul class="pokemon-list" v-else>
- 
-       
-  <li class="pokemon-entry" v-for="pokemon in yourPokemon" :key="pokemon.id">
-    <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
-      <div class="boxiscool">
-        <img :src="dreamWorldUrl(pokemon.pokeId)" :alt="pokemon.name" width="80" height="80" />
-        <div class="info">
-          <strong>{{ formatName(pokemon.name) }}</strong>
-          <small>#{{ pokemon.pokeId }}</small>
-        </div>
-      </div>
-    </router-link>
-    <button v-if="!isFavorited(pokemon)" class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
-    <button class="favorite-btn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
-  </li>
-
-        
+        <li class="pokemon-entry" v-for="pokemon in yourPokemon" :key="pokemon.id">
+          <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
+            <div class="boxiscool">
+              <img :src="dreamWorldUrl(pokemon.pokeId)" :alt="pokemon.name" width="80" height="80" />
+              <div class="info">
+                <strong>{{ formatName(pokemon.name) }}</strong>
+                <small>#{{ pokemon.pokeId }}</small>
+              </div>
+            </div>
+          </router-link>
+          <button v-if="!isFavorited(pokemon)" class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
+          <button class="favorite-btn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
+        </li>
       </ul>
     </section>
-
-
   </div>
 </template>
 
