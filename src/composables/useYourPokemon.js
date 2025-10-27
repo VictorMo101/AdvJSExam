@@ -1,4 +1,3 @@
-// useYourPokemon.js
 import { ref, watch, onBeforeUnmount } from 'vue'
 import {
   collection,
@@ -8,18 +7,26 @@ import {
   doc,
   query,
   where,
-  getDocs
+  getDocs,
+  updateDoc, arrayUnion, arrayRemove,
+  setDoc, serverTimestamp
 } from 'firebase/firestore'
 import { db } from './firebase.js'
 import { useAuth } from './useAuth.js'
+import { usePokemon } from '@/composables/usePokemon'
 
 export function useYourPokemon() {
-  const yourPokemonFBcollectionRef = 'yourPokemon'
+   const yourPokemonFBcollectionRef = 'yourPokemon'
+  const userFavoritesCollection = 'userFavorites'
   const yourPokemon = ref([])
   const showError = ref(false)
   const { currentUser } = useAuth()
+  const { dreamWorldUrl, max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon()
+
+  const favoritesSet = ref(new Set())
 
   let unsubscribe = null
+  let unsubscribeFav = null
 
   const subscribeToUserPokemon = (uid) => {
     if (unsubscribe) {
@@ -37,15 +44,34 @@ export function useYourPokemon() {
     })
   }
 
+  const subscribeToFavorites = (uid) => {
+    if (unsubscribeFav) {
+      unsubscribeFav()
+      unsubscribeFav = null
+    }
+    favoritesSet.value = new Set()
+    if (!uid) return
+
+    const q = query(collection(db, userFavoritesCollection), where('uid', '==', uid))
+    unsubscribeFav = onSnapshot(q, (snapshot) => {
+      favoritesSet.value = new Set(snapshot.docs.map(d => d.data().pokemonDocId))
+    })
+  }
+
   watch(
     () => currentUser.value?.uid,
-    (uid) => subscribeToUserPokemon(uid),
+    (uid) => {
+      subscribeToUserPokemon(uid)
+      subscribeToFavorites(uid)
+    },
     { immediate: true }
   )
 
   onBeforeUnmount(() => {
     if (unsubscribe) unsubscribe()
+    if (unsubscribeFav) unsubscribeFav()
   })
+
 
   // 🧩 Check if user already owns Pokémon
   const userOwnsPokemon = async (pokeId) => {
@@ -76,7 +102,7 @@ export function useYourPokemon() {
       return
     }
 
-    try {
+
       await addDoc(collection(db, yourPokemonFBcollectionRef), {
         name: pokemon.name,
         image: pokemon.image,
@@ -84,11 +110,10 @@ export function useYourPokemon() {
         userId: currentUser.value.uid,
         userEmail: currentUser.value.email,
         createdAt: new Date(),
+        favorite: [],
       })
       console.log(`✅ Added ${pokemon.name} to Firestore`)
-    } catch (err) {
-      console.log('❌ Failed to add Pokémon:', err)
-    }
+
   }
 
   // 🗑️ Delete Pokémon
@@ -101,10 +126,69 @@ export function useYourPokemon() {
     }
   }
 
+
+
+const selectedPokemon = ref(null)
+
+const randomId = (max) => Math.floor(Math.random() * max) + 1
+
+const loadRandomPokemon = async () => {
+  try {
+    const id = randomId(max_Pokemon)
+    const data = await fetchPokemonDataBeforeRedirect(id)
+
+    if (!data || !data.pokemon) {
+      selectedPokemon.value = null
+      return
+    }
+
+    selectedPokemon.value = {
+      id,
+      name: data.pokemon.name,
+      image: dreamWorldUrl(id),
+    }
+
+    // ✅ Add to Firestore if not already owned
+    await addPokemon(selectedPokemon.value)
+  } catch (e) {
+    console.error('Failed to load random Pokémon', e)
+    selectedPokemon.value = null
+  }
+}
+
+
+
+ const toggleFavorite = async (pokemon) => {
+    if (!currentUser.value || !pokemon?.id) return
+
+    const userId = currentUser.value.uid
+    const key = `${userId}_${pokemon.id}`
+    const favRef = doc(db, userFavoritesCollection, key)
+    const hasFavorited = favoritesSet.value.has(pokemon.id)
+
+    try {
+      if (hasFavorited) {
+        await deleteDoc(favRef)
+      } else {
+        await setDoc(favRef, {
+          uid: userId,
+          pokemonDocId: pokemon.id,
+          pokeId: pokemon.pokeId,
+          createdAt: serverTimestamp()
+        })
+      }
+    } catch (error) {
+      console.log('error update:', error)
+    }
+  }
+
   return {
     yourPokemon,
-    addPokemon,
     deletePokemon,
-    showError,
+    loadRandomPokemon,
+    selectedPokemon,
+    toggleFavorite,
+    currentUser,
+    favoritesSet
   }
 }

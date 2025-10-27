@@ -1,41 +1,18 @@
 <script setup>
-import { ref } from 'vue'
 import { usePokemon } from '@/composables/usePokemon'
 import { useYourPokemon } from '@/composables/useYourPokemon'
 
-const { dreamWorldUrl, formatName, max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon()
-const { addPokemon, yourPokemon, deletePokemon } = useYourPokemon()
+const { dreamWorldUrl, formatName } = usePokemon()
+const { yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet } = useYourPokemon()
 
-
-const selectedPokemon = ref(null)
-
-const randomId = (max) => Math.floor(Math.random() * max) + 1
-
-const loadRandomPokemon = async () => {
-  try {
-    const id = randomId(max_Pokemon)
-    const data = await fetchPokemonDataBeforeRedirect(id)
-
-    if (!data || !data.pokemon) {
-      selectedPokemon.value = null
-      return
-    }
-
-    const image = dreamWorldUrl(id)
-
-    selectedPokemon.value = {
-      id,
-      name: data.pokemon.name,
-      image,
-    }
-
-    // ✅ Add to Firestore if not already owned
-    await addPokemon(selectedPokemon.value)
-  } catch (e) {
-    console.error('Failed to load random Pokémon', e)
-    selectedPokemon.value = null
-  }
+const getFavoriteButtonLabel = (pokemon) => {
+  return favoritesSet.value.has(pokemon.id) ? '❤️' : '🩶'
 }
+
+const isFavorited = (pokemon) => {
+  return favoritesSet.value.has(pokemon.id)
+}
+
 </script>
 
 <template>
@@ -71,17 +48,18 @@ const loadRandomPokemon = async () => {
  
        
   <li class="pokemon-entry" v-for="pokemon in yourPokemon" :key="pokemon.id">
-  <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
-    <div class="boxiscool">
-      <img :src="pokemon.image" :alt="pokemon.name" width="80" height="80" />
-      <div class="info">
-        <strong>{{ formatName(pokemon.name) }}</strong>
-        <small>#{{ pokemon.pokeId }}</small>
+    <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
+      <div class="boxiscool">
+        <img :src="dreamWorldUrl(pokemon.pokeId)" :alt="pokemon.name" width="80" height="80" />
+        <div class="info">
+          <strong>{{ formatName(pokemon.name) }}</strong>
+          <small>#{{ pokemon.pokeId }}</small>
+        </div>
       </div>
-    </div>
-  </router-link>
-  <button class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
-</li>
+    </router-link>
+    <button v-if="!isFavorited(pokemon)" class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
+    <button class="favorite-btn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
+  </li>
 
         
       </ul>
@@ -169,7 +147,6 @@ const loadRandomPokemon = async () => {
 .delete-btn {
   background: #ff5c5c;
   color: white;
-  border: none;
   padding: 6px 10px;
   border-radius: 1rem;
   cursor: pointer;
@@ -180,5 +157,16 @@ const loadRandomPokemon = async () => {
 
 .delete-btn:hover {
   background: #ff3c3c;
+}
+
+
+.favorite-btn {
+  background: #ffd700;
+  padding: 6px;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+  top: -1.7rem;
 }
 </style>
