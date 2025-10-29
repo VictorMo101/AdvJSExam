@@ -8,7 +8,8 @@ import {
   query,
   where,
   getDocs,
-  setDoc, serverTimestamp
+  setDoc, serverTimestamp,
+  updateDoc, deleteField
 } from 'firebase/firestore'
 import { db } from './firebase.js'
 import { useAuth } from './useAuth.js'
@@ -18,7 +19,6 @@ export function useYourPokemon() {
    const yourPokemonFBcollectionRef = 'yourPokemon'
   const userFavoritesCollection = 'userFavorites'
   const yourPokemon = ref([])
-  const showError = ref(false)
   const { currentUser } = useAuth()
   const { dreamWorldUrl, max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon()
 
@@ -180,6 +180,28 @@ const loadRandomPokemon = async () => {
     }
   }
 
+
+
+
+
+
+
+  const setNickname = async (docId, nickname) => {
+  if (!currentUser.value) return
+  const clean = (nickname ?? '').trim()
+  await updateDoc(doc(db, yourPokemonFBcollectionRef, docId), {
+    nickname: clean ? clean : deleteField(),
+    updatedAt: serverTimestamp()
+  })
+}
+
+const resetNickname = async (docId) => {
+  await updateDoc(doc(db, yourPokemonFBcollectionRef, docId), {
+    nickname: deleteField(),
+    updatedAt: serverTimestamp()
+  })
+}
+
   return {
     yourPokemon,
     deletePokemon,
@@ -187,6 +209,8 @@ const loadRandomPokemon = async () => {
     selectedPokemon,
     toggleFavorite,
     currentUser,
-    favoritesSet
+    favoritesSet,
+    setNickname,
+    resetNickname,
   }
 }

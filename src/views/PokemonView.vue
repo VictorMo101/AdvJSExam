@@ -1,17 +1,33 @@
 <script setup>
+import { ref } from 'vue'
 import { usePokemon } from '@/composables/usePokemon'
 import { useYourPokemon } from '@/composables/useYourPokemon'
 
 const { dreamWorldUrl, formatName } = usePokemon()
-const { yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet } = useYourPokemon()
+const { setNickname, resetNickname, yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet } = useYourPokemon()
 
-const getFavoriteButtonLabel = (pokemon) => {
-  return favoritesSet.value.has(pokemon.id) ? '❤️' : '🩶'
+const getFavoriteButtonLabel = (pokemon) => favoritesSet.value.has(pokemon.id) ? '❤️' : '🩶'
+const isFavorited = (pokemon) => favoritesSet.value.has(pokemon.id)
+
+
+
+// local edit buffer per docId
+const nicknames = ref({})
+
+// display helper: nickname if set, else original formatted name
+const displayName = (pokemon) => pokemon.nickname ? pokemon.nickname : formatName(pokemon.name)
+
+const saveNick = async (pokemon) => {
+  await setNickname(pokemon.id, nicknames.value[pokemon.id] || '')
 }
 
-const isFavorited = (pokemon) => {
-  return favoritesSet.value.has(pokemon.id)
+const resetNick = async (pokemon) => {
+  await resetNickname(pokemon.id)
+  nicknames.value[pokemon.id] = ''
 }
+
+const showNickChange = ref(false);
+const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 
 </script>
 
@@ -37,7 +53,7 @@ const isFavorited = (pokemon) => {
     </section>
 
     <!-- 🧾 Your Saved Pokémon -->
-    <section class="your-pokemon-section">
+ <section class="your-pokemon-section">
       <h2>Your Pokemon Collection</h2>
 
       <div v-if="yourPokemon.length === 0" class="empty">
@@ -50,13 +66,34 @@ const isFavorited = (pokemon) => {
             <div class="boxiscool">
               <img :src="dreamWorldUrl(pokemon.pokeId)" :alt="pokemon.name" width="80" height="80" />
               <div class="info">
-                <strong>{{ formatName(pokemon.name) }}</strong>
+                <!-- show nickname if present -->
+                <strong>{{ displayName(pokemon) }}</strong>
                 <small>#{{ pokemon.pokeId }}</small>
               </div>
             </div>
           </router-link>
-          <button v-if="!isFavorited(pokemon)" class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
-          <button class="favorite-btn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
+
+      <div class="nickShow">
+        <button class="nickShowButton" type="button" @click="toggleNickChange">
+            {{ showNickChange ? 'Hide' : 'Change name?' }}
+        </button>
+    </div>
+
+          <!-- nickname editor -->
+          <div class="nick-editor" v-if="showNickChange">
+            <input
+              type="text"
+              :placeholder="pokemon.nickname || formatName(pokemon.name)"
+              v-model="nicknames[pokemon.id]"
+            />
+            <button @click.stop="saveNick(pokemon)">Save</button>
+            <button @click.stop="resetNick(pokemon)">Reset</button>
+          </div>
+          <div class="dltfvrBox">
+            <button v-if="!isFavorited(pokemon)" class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
+            <button class="favorite-btn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
+          </div>
+
         </li>
       </ul>
     </section>
@@ -64,6 +101,43 @@ const isFavorited = (pokemon) => {
 </template>
 
 <style scoped>
+.nickShowButton {
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  border: none;
+  background-color: #fff;
+  border: 2px solid #C2CBD2;
+  cursor: pointer;
+  margin: 0.5rem 0 0.5rem 0;
+}
+
+.nick-editor {
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.nick-editor input {
+  width: 90px;
+  padding: 0.25rem 0.5rem;
+  align-self: center;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.nick-editor button {
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  border: none;
+  background-color: #fff;
+  border: 2px solid #C2CBD2;
+  cursor: pointer;
+}
+
+
+
 .pokemon-view {
   width: 90%;
   margin: auto;
@@ -73,7 +147,6 @@ const isFavorited = (pokemon) => {
 }
 
 .boxiscool {
-  height:100%;
   width: 100%;
 }
 
@@ -83,7 +156,7 @@ const isFavorited = (pokemon) => {
 }
 
 .load-btn {
-  margin-top: 1rem;
+  margin-top: 1rem; 
   background-color: #fff;
   border: 2px solid #C2CBD2;
   padding: 0.5rem 1rem 0.5rem 1rem;
@@ -146,7 +219,6 @@ const isFavorited = (pokemon) => {
   cursor: pointer;
   transition: 0.2s;
   position: relative;
-  top: -1.7rem;
 }
 
 .delete-btn:hover {
@@ -161,6 +233,10 @@ const isFavorited = (pokemon) => {
   cursor: pointer;
   transition: 0.2s;
   position: relative;
-  top: -1.7rem;
+}
+
+.dltfvrBox {
+  display: flex;
+  justify-content: space-evenly;
 }
 </style>
