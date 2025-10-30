@@ -55,11 +55,12 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
     <!-- 🧾 Your Saved Pokémon -->
  <section class="your-pokemon-section">
       <h2>Your Pokemon Collection</h2>
-            <div class="nickShow">
-        <button class="nickShowButton" type="button" @click="toggleNickChange">
-            {{ showNickChange ? 'Hide' : 'Add Nicknames?' }}
-        </button>
-    </div>
+
+      <div class="nickShow">
+          <button class="nickShowButton" type="button" @click="toggleNickChange">
+              {{ showNickChange ? 'Hide' : 'Add Nicknames?' }}
+          </button>
+      </div>
 
       <div v-if="yourPokemon.length === 0" class="empty">
         <p>You dont have any Pokemon yet. Click the button above to catch one!</p>
@@ -100,18 +101,27 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 </template>
 
 <style scoped>
+.nickShow {
+  margin-bottom: 1rem;
+}
+
 .nickShowButton {
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   border-radius: 1rem;
   border: none;
   background-color: #fff;
   border: 2px solid #C2CBD2;
   cursor: pointer;
-  margin: 0.5rem 0 0.5rem 0;
+  margin: 0.5rem 0 0 0;
+  transition: background-color 0.3s;
+}
+
+.nickShowButton:hover {
+  background-color: #f0f0f0;
 }
 
 .nick-editor {
-  margin: 0 0 0.5rem 0;
+  margin: 0.5rem 0 0.5rem 0;
   display: flex;
   gap: 0.5rem;
   justify-content: center;
@@ -133,8 +143,13 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   background-color: #fff;
   border: 2px solid #C2CBD2;
   cursor: pointer;
+
+  transition: background-color 0.3s;
 }
 
+.nick-editor button:hover {
+  background-color: #f0f0f0;
+}
 
 
 .pokemon-view {
@@ -237,5 +252,6 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 .dltfvrBox {
   display: flex;
   justify-content: space-around;
+  margin-top: 0.5rem;
 }
 </style>
