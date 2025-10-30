@@ -30,7 +30,6 @@ const toggleRegister = () => { showRegister.value = !showRegister.value; }
             <input type="email" v-model="email" placeholder="Email" required />
             <input type="password" v-model="password" placeholder="Password" required />
             <button type="submit" :disabled="loading">Login</button>
-            <!-- button press to toggle Register -->
         </form>
         <div class="error" v-if="authError">
             {{ authError }}

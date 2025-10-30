@@ -24,6 +24,8 @@ export function useYourPokemon() {
 
   const favoritesSet = ref(new Set())
 
+    const alreadyOwned = ref(false)
+
   let unsubscribe = null
   let unsubscribeFav = null
 
@@ -71,8 +73,6 @@ export function useYourPokemon() {
     if (unsubscribeFav) unsubscribeFav()
   })
 
-
-  // 🧩 Check if user already owns Pokémon
   const userOwnsPokemon = async (pokeId) => {
     if (!currentUser.value) return false
     const q = query(
@@ -84,7 +84,7 @@ export function useYourPokemon() {
     return !snapshot.empty
   }
 
-  // ✅ Add Pokémon if not already owned
+
   const addPokemon = async (pokemon) => {
     if (!pokemon || !pokemon.name) {
       console.log('Invalid Pokémon data')
@@ -95,9 +95,11 @@ export function useYourPokemon() {
       return
     }
 
-    const alreadyOwned = await userOwnsPokemon(pokemon.id)
-    if (alreadyOwned) {
-      console.log(`⚠️ You already own ${pokemon.name}`)
+    alreadyOwned.value = false
+
+    const owned = await userOwnsPokemon(pokemon.id)
+    if (owned) {
+      alreadyOwned.value = true
       return
     }
 
@@ -110,21 +112,16 @@ export function useYourPokemon() {
         userEmail: currentUser.value.email,
         createdAt: new Date(),
       })
-      console.log(`✅ Added ${pokemon.name} to Firestore`)
 
   }
 
-  // 🗑️ Delete Pokémon
   const deletePokemon = async (id) => {
     try {
       await deleteDoc(doc(db, yourPokemonFBcollectionRef, id))
-      console.log(`🗑️ Pokémon with ID ${id} deleted`)
     } catch (err) {
-      console.log('❌ Failed to delete Pokémon:', err)
+      console.log('Failed to delete Pokémon:', err)
     }
   }
-
-
 
 const selectedPokemon = ref(null)
 
@@ -146,15 +143,12 @@ const loadRandomPokemon = async () => {
       image: dreamWorldUrl(id),
     }
 
-    // ✅ Add to Firestore if not already owned
     await addPokemon(selectedPokemon.value)
   } catch (e) {
     console.error('Failed to load random Pokémon', e)
     selectedPokemon.value = null
   }
 }
-
-
 
  const toggleFavorite = async (pokemon) => {
     if (!currentUser.value || !pokemon?.id) return
@@ -212,5 +206,6 @@ const resetNickname = async (docId) => {
     favoritesSet,
     setNickname,
     resetNickname,
+    alreadyOwned,
   }
 }

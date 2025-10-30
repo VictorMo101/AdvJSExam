@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { usePokemon } from '../composables/usePokemon'; // <-- import composable
+import { usePokemon } from '../composables/usePokemon'; 
 
-const { dreamWorldUrl, formatName, fetchPokemonDataBeforeRedirect } = usePokemon();
+const { getFlavorText, typeColors, dreamWorldUrl, formatName, fetchPokemonDataBeforeRedirect } = usePokemon();
 
 const route = useRoute();
 const router = useRouter();
@@ -12,28 +12,6 @@ const pokemon = ref(null);
 const species = ref(null);
 const loading = ref(true);
 const error = ref(null);
-
-// simple type -> color map (adjust colors as you like)
-const typeColors = {
-  normal: '#A8A77A',
-  fire: '#EE8130',
-  water: '#6390F0',
-  electric: '#F7D02C',
-  grass: '#7AC74C',
-  ice: '#96D9D6',
-  fighting: '#C22E28',
-  poison: '#A33EA1',
-  ground: '#E2BF65',
-  flying: '#A98FF3',
-  psychic: '#F95587',
-  bug: '#A6B91A',
-  rock: '#B6A136',
-  ghost: '#735797',
-  dragon: '#6F35FC',
-  dark: '#705746',
-  steel: '#B7B7CE',
-  fairy: '#D685AD'
-};
 
 const loadPokemonById = async (id) => {
   const result = await fetchPokemonDataBeforeRedirect(id);
@@ -45,12 +23,6 @@ const loadPokemonById = async (id) => {
   }
 
   loading.value = false;
-};
-
-const getFlavorText = () => {
-  if (!species.value) return '';
-  const entry = species.value.flavor_text_entries?.find(e => e.language?.name === 'en');
-  return entry ? entry.flavor_text.replace(/\f|\n|\r/g, ' ') : '';
 };
 
 
@@ -115,7 +87,7 @@ watch(() => route.params.id, (newId) => {
           </div>
 
           <p class="description">
-            <strong>About:</strong> {{ getFlavorText() }}
+            <strong>About:</strong> {{ getFlavorText(species) }}
           </p>
 
         </div>

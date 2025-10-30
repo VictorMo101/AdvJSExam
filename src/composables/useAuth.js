@@ -9,7 +9,6 @@ const isLoggedIn = computed(() => !!currentUser.value)
 const authError = ref(null)
 const loading = ref(false)
 
-//if something changes in firebase, it tells it to reload. Force an update in vue.
 onAuthStateChanged(auth, (user) => {
     currentUser.value = user
 }) 
@@ -31,12 +30,12 @@ const login = async (email, password) => {
 }
 
 const logout = async (routerInstance) => {
-    console.log("logout of this mail: ", currentUser.value?.email) /* putting ''?'' is telling the system it cant become undefined */
+    console.log("logout of this mail: ", currentUser.value?.email) 
     loading.value = true
     authError.value = null
 
     try {
-        await signOut(auth) //The only neccessary thing to do, everything else is UX for the user.
+        await signOut(auth) 
         if (routerInstance) {
             routerInstance.push('/')
         }

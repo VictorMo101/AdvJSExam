@@ -4,7 +4,7 @@ import { usePokemon } from '../composables/usePokemon'
 import { useYourPokemon } from '../composables/useYourPokemon'
 
 const { dreamWorldUrl, formatName } = usePokemon()
-const { setNickname, resetNickname, yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet } = useYourPokemon()
+const { setNickname, resetNickname, yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet, alreadyOwned } = useYourPokemon()
 
 const getFavoriteButtonLabel = (pokemon) => favoritesSet.value.has(pokemon.id) ? '❤️' : '🩶'
 const isFavorited = (pokemon) => favoritesSet.value.has(pokemon.id)
@@ -48,7 +48,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
           height="200"
         />
       </div>
-
+      <p class="alreadyOwnText" v-if="alreadyOwned">You already own this Pokemon!</p>
       <button class="load-btn" @click="loadRandomPokemon">Pokemon Button</button>
     </section>
 
@@ -101,6 +101,12 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 </template>
 
 <style scoped>
+.alreadyOwnText {
+  color: #666;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
 .nickShow {
   margin-bottom: 1rem;
 }
