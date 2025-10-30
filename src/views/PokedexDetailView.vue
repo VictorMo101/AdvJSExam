@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { usePokemon } from '@/composables/usePokemon'; // <-- import composable
+import { usePokemon } from '../composables/usePokemon'; // <-- import composable
 
 const { dreamWorldUrl, formatName, fetchPokemonDataBeforeRedirect } = usePokemon();
 

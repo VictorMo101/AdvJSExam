@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore'
 import { db } from './firebase.js'
 import { useAuth } from './useAuth.js'
-import { usePokemon } from '@/composables/usePokemon'
+import { usePokemon } from './usePokemon'
 
 export function useYourPokemon() {
    const yourPokemonFBcollectionRef = 'yourPokemon'

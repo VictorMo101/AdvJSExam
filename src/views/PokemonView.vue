@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import { usePokemon } from '@/composables/usePokemon'
-import { useYourPokemon } from '@/composables/useYourPokemon'
+import { usePokemon } from '../composables/usePokemon'
+import { useYourPokemon } from '../composables/useYourPokemon'
 
 const { dreamWorldUrl, formatName } = usePokemon()
 const { setNickname, resetNickname, yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet } = useYourPokemon()
