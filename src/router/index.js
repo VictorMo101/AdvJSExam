@@ -33,15 +33,13 @@ const router = createRouter({
   ],
 })
 
-//navigation guard to pretet routes that requre authentication
 router.beforeEach((to, from, next) => {
     const { isLoggedIn } = useAuth()
 
     if (to.meta.requiresAuth && !isLoggedIn.value) {
-        //redirect to login if not authenticated
         next({ name: 'login' })
     } else {
-        next() //proceed to route
+        next()
     }
 })
 
