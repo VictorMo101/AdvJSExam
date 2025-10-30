@@ -55,6 +55,11 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
     <!-- 🧾 Your Saved Pokémon -->
  <section class="your-pokemon-section">
       <h2>Your Pokemon Collection</h2>
+            <div class="nickShow">
+        <button class="nickShowButton" type="button" @click="toggleNickChange">
+            {{ showNickChange ? 'Hide' : 'Add Nicknames?' }}
+        </button>
+    </div>
 
       <div v-if="yourPokemon.length === 0" class="empty">
         <p>You dont have any Pokemon yet. Click the button above to catch one!</p>
@@ -72,12 +77,6 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
               </div>
             </div>
           </router-link>
-
-      <div class="nickShow">
-        <button class="nickShowButton" type="button" @click="toggleNickChange">
-            {{ showNickChange ? 'Hide' : 'Change name?' }}
-        </button>
-    </div>
 
           <!-- nickname editor -->
           <div class="nick-editor" v-if="showNickChange">
@@ -237,6 +236,6 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 
 .dltfvrBox {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 </style>

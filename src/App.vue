@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router'
 import AuthButton from './components/authButton.vue'
 
 import { useAuth } from './composables/useAuth';
-const { isLoggedIn } = useAuth();
+const { currentUser,  isLoggedIn } = useAuth();
 
 </script>
 
@@ -24,7 +24,7 @@ const { isLoggedIn } = useAuth();
         <li v-if="isLoggedIn"> 
           <router-link to="/Pokemon">Pokemon</router-link>
         </li>
-
+        <p v-if="isLoggedIn">Hello there {{ currentUser.email }}! </p>
       </ul>
 
     </nav>
@@ -46,7 +46,10 @@ body {
   box-sizing: border-box;
 }
 
-
+.navbar p {
+  color: white;
+  margin-left: 1rem;
+}
 
 .navbar {
   margin: 0.5rem auto 0.5rem auto;
