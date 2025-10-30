@@ -197,4 +197,30 @@ watch(() => route.params.id, (newId) => {
   list-style: none;
 }
 
+@media (max-width: 700px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .imageWrap img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .info {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stats ul {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 12rem;
+    border-radius: 1rem;
+  }
+}
 </style>

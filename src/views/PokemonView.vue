@@ -4,17 +4,13 @@ import { usePokemon } from '../composables/usePokemon'
 import { useYourPokemon } from '../composables/useYourPokemon'
 
 const { dreamWorldUrl, formatName } = usePokemon()
-const { setNickname, resetNickname, yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, currentUser, favoritesSet, alreadyOwned } = useYourPokemon()
+const { setNickname, resetNickname, yourPokemon, deletePokemon, loadRandomPokemon, selectedPokemon, toggleFavorite, favoritesSet, alreadyOwned } = useYourPokemon()
 
 const getFavoriteButtonLabel = (pokemon) => favoritesSet.value.has(pokemon.id) ? '❤️' : '🩶'
 const isFavorited = (pokemon) => favoritesSet.value.has(pokemon.id)
 
-
-
-// local edit buffer per docId
 const nicknames = ref({})
 
-// display helper: nickname if set, else original formatted name
 const displayName = (pokemon) => pokemon.nickname ? pokemon.nickname : formatName(pokemon.name)
 
 const saveNick = async (pokemon) => {
@@ -33,8 +29,6 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 
 <template>
   <div class="pokemon-view">
-
-    <!-- 🎲 Random Pokémon Loader -->
     <section class="random-section">
       <h2>Add a Pokemon to your collection here!</h2>
 
@@ -52,8 +46,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
       <button class="load-btn" @click="loadRandomPokemon">Pokemon Button</button>
     </section>
 
-    <!-- 🧾 Your Saved Pokémon -->
- <section class="your-pokemon-section">
+    <section class="your-pokemon-section">
       <h2>Your Pokemon Collection</h2>
 
       <div class="nickShow">
@@ -69,17 +62,15 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
       <ul class="pokemon-list" v-else>
         <li class="pokemon-entry" v-for="pokemon in yourPokemon" :key="pokemon.id">
           <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
-            <div class="boxiscool">
+            <div class="pokemonBox">
               <img :src="dreamWorldUrl(pokemon.pokeId)" :alt="pokemon.name" width="80" height="80" />
               <div class="info">
-                <!-- show nickname if present -->
                 <strong>{{ displayName(pokemon) }}</strong>
                 <small>#{{ pokemon.pokeId }}</small>
               </div>
             </div>
           </router-link>
 
-          <!-- nickname editor -->
           <div class="nick-editor" v-if="showNickChange">
             <input
               type="text"
@@ -166,12 +157,11 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   gap: 2rem;
 }
 
-.boxiscool {
+.pokemonBox {
   width: 100%;
 }
 
-.random-section,
-.your-pokemon-section {
+.random-section, .your-pokemon-section {
   text-align: center;
 }
 
