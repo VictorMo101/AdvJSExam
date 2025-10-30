@@ -5,7 +5,7 @@ import { usePokemon } from '../composables/usePokemon.js';
 const { formatName, dreamWorldUrl, max_Pokemon, fetchPokemonDataBeforeRedirect } = usePokemon();
 
 const query = ref('');
-const pokedexList = ref([]); // [{ id, name }]
+const pokedexList = ref([]);
 
 const loadList = async () => {
   const ids = Array.from({ length: max_Pokemon }, (_, i) => i + 1);
