@@ -106,5 +106,36 @@ background-color: #4C5A66;
   color: #9CA3AF;
 }
 
+@media (max-width: 700px) {
+  html {
+    margin-top: 4rem;
+  }
+  
+  .navbar {
+    width: 100%;
+    overflow: scroll;
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    z-index: 4;
+    opacity: 0.95;
+  }
 
+  .navbar p {
+    font-size: 12px;
+    margin-right: 2rem;
+  }
+
+  .navbar ul li:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+  .navbar ul li {
+    min-width: 70px;
+    font-size: 0.8rem;
+  }
+}
 </style>

@@ -128,4 +128,22 @@ form {
     display: flex;
     flex-direction: row;
 }
+
+@media (max-width: 700px) {
+    form {
+        flex-direction: column;
+    }
+
+    input {
+        margin: 0 0 0.5rem 0;
+    }
+
+    button {
+        margin: 0.5rem 0 0 0;
+    }
+
+    .login-view, .register-view {
+        width: 80%;
+    }
+}
 </style>
