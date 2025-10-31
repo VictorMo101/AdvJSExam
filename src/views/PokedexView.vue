@@ -7,6 +7,8 @@ const { formatName, dreamWorldUrl, max_Pokemon, fetchPokemonDataBeforeRedirect }
 const query = ref('');
 const pokedexList = ref([]);
 
+const loading = ref(true);
+
 const loadList = async () => {
   const ids = Array.from({ length: max_Pokemon }, (_, i) => i + 1);
   const results = await Promise.all(
@@ -17,6 +19,7 @@ const loadList = async () => {
     })
   );
   pokedexList.value = results.filter(Boolean);
+    loading.value = false;
 };
 
 const filteredPokemons = computed(() => {
@@ -45,6 +48,7 @@ onMounted(loadList);
           >
         </div>
       </div>
+          <div v-if="loading" class="status">Loading...</div>
     </section>
 
     <section class="pokemonList">
