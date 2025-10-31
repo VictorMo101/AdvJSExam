@@ -110,7 +110,7 @@ export function useYourPokemon() {
         pokeId: pokemon.id,
         userId: currentUser.value.uid,
         userEmail: currentUser.value.email,
-        createdAt: new Date(),
+      createdAt: serverTimestamp(),
       })
 
   }

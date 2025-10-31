@@ -24,7 +24,7 @@ const toggleRegister = () => { showRegister.value = !showRegister.value; }
 </script>
 
 <template>
-    <div class="login-view" v-if="!isLoggedIn">
+    <div class="loginView" v-if="!isLoggedIn">
         <h2>Login</h2>
         <form @submit.prevent="loginUser">
             <input type="email" v-model="email" placeholder="Email" required />
@@ -42,7 +42,7 @@ const toggleRegister = () => { showRegister.value = !showRegister.value; }
         </button>
     </div>
 
-    <div class="register-view" v-if="!isLoggedIn && showRegister">
+    <div class="registerView" v-if="!isLoggedIn && showRegister">
         <h2>Register</h2>
         <form @submit.prevent="registerUser">
             <input type="email" v-model="regEmail" placeholder="Email" required />
@@ -60,21 +60,21 @@ const toggleRegister = () => { showRegister.value = !showRegister.value; }
 </template>
 
 <style scoped>
-.login-view {
+.loginView {
     max-width: 400px;
     margin: 20px auto;
 }
 
-.login-view h2 {
+.loginView h2 {
     margin-bottom: 0.5rem;
 }
 
-.register-view {
+.registerView {
     max-width: 400px;
     margin: 20px auto;
 }
 
-.register-view h2 {
+.registerView h2 {
     margin-bottom: 0.5rem;
 }
 
@@ -142,7 +142,7 @@ form {
         margin: 0.5rem 0 0 0;
     }
 
-    .login-view, .register-view {
+    .loginView, .registerView {
         width: 80%;
     }
 }

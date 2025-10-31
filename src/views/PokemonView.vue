@@ -28,11 +28,11 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
 </script>
 
 <template>
-  <div class="pokemon-view">
-    <section class="random-section">
+  <div class="pokemonView">
+    <section class="randomSection">
       <h2>Add a Pokemon to your collection here!</h2>
 
-      <div v-if="selectedPokemon" class="pokemon-card">
+      <div v-if="selectedPokemon" class="pokemonCard">
         <p>You got {{ formatName(selectedPokemon.name) }}!</p>
         <img
           v-if="selectedPokemon.image"
@@ -43,10 +43,10 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
         />
       </div>
       <p class="alreadyOwnText" v-if="alreadyOwned">You already own this Pokemon!</p>
-      <button class="load-btn" @click="loadRandomPokemon">Pokemon Button</button>
+      <button class="loadBtn" @click="loadRandomPokemon">Pokemon Button</button>
     </section>
 
-    <section class="your-pokemon-section">
+    <section class="yourPokemonSection">
       <h2>Your Pokemon Collection</h2>
 
       <div class="nickShow">
@@ -59,8 +59,8 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
         <p>You dont have any Pokemon yet. Click the button above to catch one!</p>
       </div>
       
-      <ul class="pokemon-list" v-else>
-        <li class="pokemon-entry" v-for="pokemon in yourPokemon" :key="pokemon.id">
+      <ul class="pokemonList" v-else>
+        <li class="pokemonEntry" v-for="pokemon in yourPokemon" :key="pokemon.id">
           <router-link :to="`/pokedex/pokedexDetail/${pokemon.pokeId}`">
             <div class="pokemonBox">
               <img :src="dreamWorldUrl(pokemon.pokeId)" :alt="pokemon.name" width="80" height="80" />
@@ -71,7 +71,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
             </div>
           </router-link>
 
-          <div class="nick-editor" v-if="showNickChange">
+          <div class="nickEditor" v-if="showNickChange">
             <input
               type="text"
               :placeholder="pokemon.nickname || formatName(pokemon.name)"
@@ -81,8 +81,8 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
             <button @click.stop="resetNick(pokemon)">Reset</button>
           </div>
           <div class="dltfvrBox">
-            <button v-if="!isFavorited(pokemon)" class="delete-btn" @click.stop="deletePokemon(pokemon.id)">Release</button>
-            <button class="favorite-btn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
+            <button v-if="!isFavorited(pokemon)" class="deleteBtn" @click.stop="deletePokemon(pokemon.id)">Release</button>
+            <button class="favoriteBtn" @click.stop="toggleFavorite(pokemon)">{{ getFavoriteButtonLabel(pokemon) }}</button>
           </div>
 
         </li>
@@ -117,7 +117,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   background-color: #f0f0f0;
 }
 
-.nick-editor {
+.nickEditor {
   margin: 0.5rem 0 0.5rem 0;
   display: flex;
   gap: 0.5rem;
@@ -125,7 +125,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   flex-direction: column;
 }
 
-.nick-editor input {
+.nickEditor input {
   width: 90px;
   padding: 0.25rem 0.5rem;
   align-self: center;
@@ -133,7 +133,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   text-align: center;
 }
 
-.nick-editor button {
+.nickEditor button {
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;
   border: none;
@@ -144,12 +144,12 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   transition: background-color 0.3s;
 }
 
-.nick-editor button:hover {
+.nickEditor button:hover {
   background-color: #f0f0f0;
 }
 
 
-.pokemon-view {
+.pokemonView {
   width: 90%;
   margin: auto;
   display: flex;
@@ -161,11 +161,15 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   width: 100%;
 }
 
-.random-section, .your-pokemon-section {
+.randomSection, .yourPokemonSection {
   text-align: center;
 }
 
-.load-btn {
+.randomSection h2 {
+  margin-top: 1rem;
+}
+
+.loadBtn {
   margin-top: 1rem; 
   background-color: #fff;
   border: 2px solid #C2CBD2;
@@ -176,12 +180,12 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   color: black;
 }
 
-.load-btn:hover {
+.loadBtn:hover {
   cursor: pointer;
   background-color: #f0f0f0;
 }
 
-.pokemon-list {
+.pokemonList {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -190,7 +194,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   padding: 0;
 }
 
-.pokemon-entry {
+.pokemonEntry {
     width: 160px;   
     background-color: #fff;
     border: 2px solid #C2CBD2;
@@ -202,17 +206,17 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
     transition: transform 0.2s;
 }
 
-.pokemon-entry:hover {
+.pokemonEntry:hover {
   transform: scale(1.05);
   cursor: pointer;
 }
 
-.pokemon-entry a {
+.pokemonEntry a {
   text-decoration: none;
   color: black;
 }
 
-.pokemon-entry .info {
+.pokemonEntry .info {
   margin-top: 0.5rem;
 }
 
@@ -221,7 +225,7 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   font-style: italic;
 }
 
-.delete-btn {
+.deleteBtn {
   background: #ff5c5c;
   color: white;
   padding: 6px 10px;
@@ -231,12 +235,12 @@ const toggleNickChange = () => { showNickChange.value = !showNickChange.value; }
   position: relative;
 }
 
-.delete-btn:hover {
+.deleteBtn:hover {
   background: #ff3c3c;
 }
 
 
-.favorite-btn {
+.favoriteBtn {
   background: #ffd700;
   padding: 6px;
   border-radius: 1rem;
